@@ -23,7 +23,11 @@
 #include <sys/wait.h>
 
 int main(int argc, char* argv[]) {
-    for (int i = 0; i < argc; i++) {
+    char *divisor = argv[1];
+    char *dividend;
+
+    for (int i = 2; i < argc; i++) {
+
         pid_t pid = fork();
 
         if (pid == -1) {
@@ -32,8 +36,9 @@ int main(int argc, char* argv[]) {
         } else if (pid == 0) {
             // Child process
             int childPID = getpid();
+            dividend = argv[i];
             printf("Checker process [%d]: Starting.\n", childPID);
-            execlp("checker", argv[1], argv[i]);
+            execlp("checker", divisor, dividend, NULL);
         } else {
             // Parent process
             printf("Coordinator: forked process with ID %d.\n", pid);
@@ -41,9 +46,9 @@ int main(int argc, char* argv[]) {
             int status;
             wait(&status);
             int result = WEXITSTATUS(status);
+            printf("Checker process [%d]: Returning %d.\n", getpid(), result);
             printf("Coordinator: child process %d returned %d.\n", pid, result);
         }
     }
-
     printf("Coordinator: exiting.\n");
 }
