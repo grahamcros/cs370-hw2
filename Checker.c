@@ -5,27 +5,23 @@
 #include <sys/resource.h>
 #include <sys/wait.h>
 
-/*
-Checker takes two arguments: the divisor (argument one) and the dividend (argument two). It checks whether argument two is divisible
-by argument one and then prints and return the value. These arguments will be supplied by coordinator
-
-Whenever something is printed, it must be prefixed by whichever file printed it ("Coordinator: xxx" or "Checker: xxx").
-*/
-
-
 int main(int argc, char *argv[]) {
+    int pid = getpid();
+    printf("Checker process [%d]: Starting.\n", pid);
     //char *a = argv[1];
-    int divisor = atoi(argv[0]);
+    int divisor = atoi(argv[1]);
     //char *b = argv[2];
-    int dividend = atoi(argv[1]);
+    int dividend = atoi(argv[2]);
 
     int remainder = dividend % divisor;
 
-    if (remainder) {
-        printf("Checker process [%d]: %d *IS* divisible by %d.\n", getpid(), dividend, divisor);
+    if (remainder == 0) {
+        printf("Checker process [%d]: %d *IS* divisible by %d.\n", pid, dividend, divisor);
+        printf("Checker process [%d]: Returning 1.\n", getpid());
         return 1;
     } else {
-        printf("Checker process [%d]: %d *IS NOT* divisible by %d.\n", getpid(), dividend, divisor);
+        printf("Checker process [%d]: %d *IS NOT* divisible by %d.\n", pid, dividend, divisor);
+        printf("Checker process [%d]: Returning 0.\n", getpid());
         return 0;
     }
 }
